@@ -114,12 +114,12 @@ func CalculateWordScores(phraseList []string) map[string]float64 {
 		}
 	}
 
-	for key, _ := range wordFrequency {
+	for key := range wordFrequency {
 		wordDegree[key] = wordDegree[key] + wordFrequency[key]
 	}
 
 	wordScore := map[string]float64{}
-	for key, _ := range wordFrequency {
+	for key := range wordFrequency {
 		setDefault_string_float(wordScore, key, 0)
 		wordScore[key] = float64(wordDegree[key]) / float64(wordFrequency[key])
 	}
