@@ -6,16 +6,16 @@ import (
 	"strings"
 )
 
-func Regex_SplitWords() *regexp.Regexp {
+func RegexSplitWords() *regexp.Regexp {
 	return regexp.MustCompile(`(\w+)`)
 }
 
-func Regex_SplitSentences() *regexp.Regexp {
+func RegexSplitSentences() *regexp.Regexp {
 	return regexp.MustCompile(`[.,\/#!$%\^&\*;:{}=\-_~()]`)
 }
 
 //Build "stop-words" regex
-func Regex_StopWords(stopWordFilePath string) *regexp.Regexp {
+func RegexStopWords(stopWordFilePath string) *regexp.Regexp {
 	stopWordList := LoadStopWords(stopWordFilePath)
 	stopWordRegexList := []string{}
 

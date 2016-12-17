@@ -9,7 +9,6 @@ import (
 	"strings"
 )
 
-// Check if this string is a number
 func IsNumber(str string) bool {
 	if strings.Contains(str, ".") { //deal with float
 		if _, err := strconv.ParseFloat(str, 32); err != nil {
@@ -24,7 +23,9 @@ func IsNumber(str string) bool {
 	return true
 }
 
-//Load a file of "stop-words"
+/* LoadStopWords is a Utility function to load stop words from a file and return a list of words
+   @param stop_word_file Path and file name of a file containing stop words.
+   @return list A list of stop words. */
 func LoadStopWords(filePath string) []string {
 	stopWords := []string{}
 
@@ -53,28 +54,31 @@ func LoadStopWords(filePath string) []string {
 	return stopWords
 }
 
-//Seperate a string into words using regex
+/* Utility function to return a list of all words that are have a length greater than a specified number of characters.
+   @param text The text that must be split in to words.
+   @param min_word_return_size The minimum no of characters a word must have to be included.*/
 func SeperateWords(text string) []string {
 	words := []string{}
 
-	splitWords := Regex_SplitWords().FindAllString(text, -1)
-	for _, single_word := range splitWords {
-		current_word := strings.ToLower(strings.TrimSpace(single_word))
-		if current_word != "" && !IsNumber(current_word) {
-			words = append(words, current_word)
+	splitWords := RegexSplitWords().FindAllString(text, -1)
+	for _, singleword := range splitWords {
+		currentword := strings.ToLower(strings.TrimSpace(singleword))
+		if currentword != "" && !IsNumber(currentword) {
+			words = append(words, currentword)
 		}
 	}
 
 	return words
 }
 
-//Split a string into sentences using regex
+/* Utility function to return a list of sentences.
+   @param text The text that must be split in to sentences.
+*/
 func SplitSentences(text string) []string {
-	splitText := Regex_SplitSentences().ReplaceAllString(strings.TrimSpace(text), "\n")
+	splitText := RegexSplitSentences().ReplaceAllString(strings.TrimSpace(text), "\n")
 	return strings.Split(splitText, "\n")
 }
 
-//Generate a list of keyword candidates based on regex
 func GenerateCandidateKeywords(sentenceList []string, stopWordPattern *regexp.Regexp) []string {
 	phraseList := []string{}
 
@@ -106,10 +110,10 @@ func CalculateWordScores(phraseList []string) map[string]float64 {
 		wordListDegree := wordListLength - 1
 
 		for _, word := range wordList {
-			setDefault_string_int(wordFrequency, word, 0)
-			wordFrequency[word] += 1
+			SetDefaultStringInt(wordFrequency, word, 0)
+			wordFrequency[word]++
 
-			setDefault_string_int(wordDegree, word, 0)
+			SetDefaultStringInt(wordDegree, word, 0)
 			wordDegree[word] += wordListDegree
 		}
 	}
@@ -120,7 +124,7 @@ func CalculateWordScores(phraseList []string) map[string]float64 {
 
 	wordScore := map[string]float64{}
 	for key := range wordFrequency {
-		setDefault_string_float(wordScore, key, 0)
+		SetDefaultStringFloat64(wordScore, key, 0)
 		wordScore[key] = float64(wordDegree[key]) / float64(wordFrequency[key])
 	}
 
@@ -131,7 +135,7 @@ func GenerateCandidateKeywordScores(phraseList []string, wordScore map[string]fl
 	keywordCandidates := map[string]float64{}
 
 	for _, phrase := range phraseList {
-		setDefault_string_float(keywordCandidates, phrase, 0)
+		SetDefaultStringFloat64(keywordCandidates, phrase, 0)
 		wordList := SeperateWords(phrase)
 		candidateScore := float64(0.0)
 
@@ -147,7 +151,7 @@ func GenerateCandidateKeywordScores(phraseList []string, wordScore map[string]fl
 
 //Util function as a Go replacement for Python's `setDefault`: https://docs.python.org/2/library/stdtypes.html#dict.setdefault
 //Basically, if key is in the dictionary, return its value. If not, insert key with a value of default and return default. default defaults to None.
-func setDefault_string_int(h map[string]int, k string, v int) (set bool, r int) {
+func SetDefaultStringInt(h map[string]int, k string, v int) (set bool, r int) {
 	if r, set = h[k]; !set {
 		h[k] = v
 		r = v
@@ -158,7 +162,7 @@ func setDefault_string_int(h map[string]int, k string, v int) (set bool, r int) 
 
 //Util function as a Go replacement for Python's `setDefault`: https://docs.python.org/2/library/stdtypes.html#dict.setdefault
 //Basically, if key is in the dictionary, return its value. If not, insert key with a value of default and return default. default defaults to None.
-func setDefault_string_float(h map[string]float64, k string, v float64) (set bool, r float64) {
+func SetDefaultStringFloat64(h map[string]float64, k string, v float64) (set bool, r float64) {
 	if r, set = h[k]; !set {
 		h[k] = v
 		r = v
@@ -173,7 +177,7 @@ func RunRake(text string) PairList {
 
 	//Build stop-word regex pattern
 	stopPath := "/Users/ab/SmartStoplist.txt"
-	stopWordPattern := Regex_StopWords(stopPath)
+	stopWordPattern := RegexStopWords(stopPath)
 
 	//Build phrase list
 	phraseList := GenerateCandidateKeywords(sentenceList, stopWordPattern)
