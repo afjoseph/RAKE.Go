@@ -6,17 +6,19 @@ import (
 	"strings"
 )
 
+// RegexSplitWords returns a regexp object that split words
 func RegexSplitWords() *regexp.Regexp {
 	return regexp.MustCompile(`(\w+)`)
 }
 
+// RegexSplitSentences returns a regexp object that detects punctuation marks
 func RegexSplitSentences() *regexp.Regexp {
 	return regexp.MustCompile(`[.,\/#!$%\^&\*;:{}=\-_~()]`)
 }
 
-//Build "stop-words" regex
-func RegexStopWords(stopWordFilePath string) *regexp.Regexp {
-	stopWordList := LoadStopWords(stopWordFilePath)
+//RegexStopWords builds "stop-words" regex based on a slice of "stop-words"
+func RegexStopWords() *regexp.Regexp {
+	stopWordList := LoadStopWords()
 	stopWordRegexList := []string{}
 
 	for _, word := range stopWordList {
