@@ -1,14 +1,12 @@
 package rake
 
 import (
-	"bufio"
-	"log"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
+//IsNumber returns true if the supplied string is a number
 func IsNumber(str string) bool {
 	if strings.Contains(str, ".") { //deal with float
 		if _, err := strconv.ParseFloat(str, 32); err != nil {
@@ -23,40 +21,7 @@ func IsNumber(str string) bool {
 	return true
 }
 
-/* LoadStopWords is a Utility function to load stop words from a file and return a list of words
-   @param stop_word_file Path and file name of a file containing stop words.
-   @return list A list of stop words. */
-func LoadStopWords(filePath string) []string {
-	stopWords := []string{}
-
-	file, err := os.Open(filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.TrimSpace(line)
-		if string(line[0]) != "#" {
-			substrings := strings.Split(line, ` `)
-			for _, word := range substrings {
-				stopWords = append(stopWords, word)
-			}
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-
-	return stopWords
-}
-
-/* Utility function to return a list of all words that are have a length greater than a specified number of characters.
-   @param text The text that must be split in to words.
-   @param min_word_return_size The minimum no of characters a word must have to be included.*/
+// SeperateWords returns a slice of all words that have a length greater than a specified number of characters.
 func SeperateWords(text string) []string {
 	words := []string{}
 
@@ -71,14 +36,13 @@ func SeperateWords(text string) []string {
 	return words
 }
 
-/* Utility function to return a list of sentences.
-   @param text The text that must be split in to sentences.
-*/
+// SplitSentences returns a slice of sentences.
 func SplitSentences(text string) []string {
 	splitText := RegexSplitSentences().ReplaceAllString(strings.TrimSpace(text), "\n")
 	return strings.Split(splitText, "\n")
 }
 
+//GenerateCandidateKeywords returns a slice of candidate keywords from a slice of sentences and a stop-words regex
 func GenerateCandidateKeywords(sentenceList []string, stopWordPattern *regexp.Regexp) []string {
 	phraseList := []string{}
 
@@ -100,6 +64,7 @@ func GenerateCandidateKeywords(sentenceList []string, stopWordPattern *regexp.Re
 	return phraseList
 }
 
+// CalculateWordScores returns a map of (string,float64) that maps to a candidate word and its score in the text
 func CalculateWordScores(phraseList []string) map[string]float64 {
 	wordFrequency := map[string]int{}
 	wordDegree := map[string]int{}
@@ -131,6 +96,7 @@ func CalculateWordScores(phraseList []string) map[string]float64 {
 	return wordScore
 }
 
+//GenerateCandidateKeywordScores returns a map of (string,float64) that contains keywords and their score in the text
 func GenerateCandidateKeywordScores(phraseList []string, wordScore map[string]float64) map[string]float64 {
 	keywordCandidates := map[string]float64{}
 
@@ -149,7 +115,7 @@ func GenerateCandidateKeywordScores(phraseList []string, wordScore map[string]fl
 	return keywordCandidates
 }
 
-//Util function as a Go replacement for Python's `setDefault`: https://docs.python.org/2/library/stdtypes.html#dict.setdefault
+//SetDefaultStringInt is a util function that serves as a Go replacement for Python's `setDefault`: https://docs.python.org/2/library/stdtypes.html#dict.setdefault
 //Basically, if key is in the dictionary, return its value. If not, insert key with a value of default and return default. default defaults to None.
 func SetDefaultStringInt(h map[string]int, k string, v int) (set bool, r int) {
 	if r, set = h[k]; !set {
@@ -160,7 +126,7 @@ func SetDefaultStringInt(h map[string]int, k string, v int) (set bool, r int) {
 	return
 }
 
-//Util function as a Go replacement for Python's `setDefault`: https://docs.python.org/2/library/stdtypes.html#dict.setdefault
+//SetDefaultStringFloat64 is a util function that serves as a Go replacement for Python's `setDefault`: https://docs.python.org/2/library/stdtypes.html#dict.setdefault
 //Basically, if key is in the dictionary, return its value. If not, insert key with a value of default and return default. default defaults to None.
 func SetDefaultStringFloat64(h map[string]float64, k string, v float64) (set bool, r float64) {
 	if r, set = h[k]; !set {
@@ -171,13 +137,13 @@ func SetDefaultStringFloat64(h map[string]float64, k string, v float64) (set boo
 	return
 }
 
+//RunRake returns a slice of key-value pairs (PairList) of a keyword and its score after running the RAKE algorithm on a given text
 func RunRake(text string) PairList {
 	//Split sentences based on punctuation
 	sentenceList := SplitSentences(text)
 
 	//Build stop-word regex pattern
-	stopPath := "/Users/ab/SmartStoplist.txt"
-	stopWordPattern := RegexStopWords(stopPath)
+	stopWordPattern := RegexStopWords()
 
 	//Build phrase list
 	phraseList := GenerateCandidateKeywords(sentenceList, stopWordPattern)
