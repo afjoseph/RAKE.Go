@@ -4,6 +4,10 @@ Original Python implementation available at: https://github.com/aneesha/RAKE
 
 The source code is released under the MIT License.
 
+## Docs and Report Card
+- godoc.org: https://godoc.org/github.com/Obaied/RAKE.Go
+- goreportcard.com: https://goreportcard.com/report/github.com/Obaied/RAKE.Go
+
 ## Example Usage
 
 ```go
