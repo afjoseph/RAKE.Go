@@ -15,11 +15,13 @@ func reverseSortByValue(myMap map[string]float64) PairList {
 	return pl
 }
 
+//Pair is a simple struct for a key-value pair of string and float64
 type Pair struct {
 	Key   string
 	Value float64
 }
 
+//PairList is just a slice of Pairs
 type PairList []Pair
 
 func (p PairList) Len() int           { return len(p) }
