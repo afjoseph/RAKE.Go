@@ -18,10 +18,9 @@ func RegexSplitSentences() *regexp.Regexp {
 
 //RegexStopWords builds "stop-words" regex based on a slice of "stop-words"
 func RegexStopWords() *regexp.Regexp {
-	stopWordList := LoadStopWords()
 	stopWordRegexList := []string{}
 
-	for _, word := range stopWordList {
+	for _, word := range StopWordsSlice {
 		wordRegex := fmt.Sprintf(`(\b%s\b)`, word)
 		stopWordRegexList = append(stopWordRegexList, wordRegex)
 	}
