@@ -5,8 +5,8 @@ Original Python implementation available at: https://github.com/aneesha/RAKE
 The source code is released under the MIT License.
 
 ## Docs and Report Card
-- godoc.org: https://godoc.org/github.com/Obaied/RAKE.Go
-- goreportcard.com: https://goreportcard.com/report/github.com/Obaied/RAKE.Go
+- godoc.org: https://godoc.org/github.com/afjoseph/RAKE.Go
+- goreportcard.com: https://goreportcard.com/report/github.com/afjoseph/RAKE.Go
 
 ## Example Usage
 
@@ -14,7 +14,7 @@ The source code is released under the MIT License.
 package main
 
 import (
-	"github.com/Obaied/goRAKE"
+	"github.com/afjoseph/goRAKE"
 	"fmt"
 )
 
