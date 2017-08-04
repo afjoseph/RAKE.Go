@@ -137,13 +137,17 @@ func SetDefaultStringFloat64(h map[string]float64, k string, v float64) (set boo
 	return
 }
 
-//RunRake returns a slice of key-value pairs (PairList) of a keyword and its score after running the RAKE algorithm on a given text
-func RunRake(text string) PairList {
+//RunRakeI18N returns a slice of key-value pairs (PairList) of a keyword and its score after running the RAKE algorithm on a given text
+func RunRakeI18N(text string, stopWords []string) PairList {
 	//Split sentences based on punctuation
 	sentenceList := SplitSentences(text)
 
 	//Build stop-word regex pattern
-	stopWordPattern := RegexStopWords()
+	words := StopWordsSlice
+	if len(stopWords) > 0 {
+		words = stopWords
+	}
+	stopWordPattern := RegexStopWords(words)
 
 	//Build phrase list
 	phraseList := GenerateCandidateKeywords(sentenceList, stopWordPattern)
@@ -155,4 +159,9 @@ func RunRake(text string) PairList {
 	keywordCandidates := GenerateCandidateKeywordScores(phraseList, wordScores)
 	sorted := reverseSortByValue(keywordCandidates)
 	return sorted
+}
+
+// RunRake wraps RunRakeI18N to respect API
+func RunRake(text string) PairList {
+	return RunRakeI18N(text, []string{})
 }
