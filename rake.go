@@ -47,7 +47,14 @@ func GenerateCandidateKeywords(sentenceList []string, stopWordPattern *regexp.Re
 	phraseList := []string{}
 
 	for _, sentence := range sentenceList {
-		tmp := stopWordPattern.ReplaceAllString(strings.TrimSpace(sentence), "|")
+		tmp := stopWordPattern.ReplaceAllString(strings.TrimSpace(sentence), " | ")
+		for {
+			abc := len(tmp)
+			tmp = stopWordPattern.ReplaceAllString(strings.TrimSpace(tmp), " | ")
+			if abc == len(tmp) {
+				break
+			}
+		}
 
 		multipleWhiteSpaceRe := regexp.MustCompile(`\s\s+`)
 		tmp = multipleWhiteSpaceRe.ReplaceAllString(strings.TrimSpace(tmp), " ")
